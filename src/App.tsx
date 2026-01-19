@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ProtectedRoute, PublicRoute } from './components/routesHelper'
-import Homepage from './pages/Homepage'
+import Dashboard from './pages/Dashboard'
 import Signin from './pages/Signin'
 import Signup from './pages/Signup'
 
@@ -11,7 +11,7 @@ function App() {
         path="/"
         element={
           <ProtectedRoute>
-            <Homepage />
+            <Dashboard />
           </ProtectedRoute>
         }
       />
