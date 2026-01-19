@@ -1,7 +1,3 @@
-/**
- * AuthContext provides authentication utilities and state to consuming components.
- * It exposes user authentication status, user info, loading status, and methods to sign in, sign up, and sign out.
- */
 import {
   createContext,
   useContext,
@@ -9,24 +5,14 @@ import {
   useEffect,
   type ReactNode,
 } from 'react'
-import {
-  login,
-  signUp as apiSignUp,
-  getCurrentUser,
-  type User,
-} from '@/api/auth'
+import { login, signUp as apiSignUp, getCurrentUser } from '@/api/auth'
+import type { User, SignInData, SignUpData } from '@/types'
 
 interface AuthContextType {
   user: User | null
   isLoading: boolean
-  signUp: (
-    username: string,
-    email: string,
-    password: string,
-    firstName: string,
-    lastName: string
-  ) => Promise<void>
-  signIn: (username: string, password: string) => Promise<void>
+  signUp: (data: SignUpData) => Promise<void>
+  signIn: (data: SignInData) => Promise<void>
   signOut: () => void
 }
 
@@ -52,27 +38,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initAuth()
   }, [])
 
-  const signUp = async (
-    username: string,
-    email: string,
-    password: string,
-    firstName: string,
-    lastName: string
-  ) => {
-    const newUser = await apiSignUp({
-      username,
-      email,
-      password,
-      firstName,
-      lastName,
+  const signUp = async (data: SignUpData) => {
+    const newUser = await apiSignUp(data)
+    const loginResponse = await login({
+      username: data.username,
+      password: data.password,
     })
-    const loginResponse = await login(username, password)
     localStorage.setItem('token', loginResponse.accessToken)
     setUser(newUser)
   }
 
-  const signIn = async (username: string, password: string) => {
-    const response = await login(username, password)
+  const signIn = async (data: SignInData) => {
+    const response = await login(data)
     localStorage.setItem('token', response.accessToken)
     setUser(response)
   }
