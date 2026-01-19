@@ -16,6 +16,14 @@ export interface UsersResponse {
 }
 
 // Auth types
+export interface AuthContextType {
+  user: User | null
+  isLoading: boolean
+  signUp: (data: SignUpData) => Promise<void>
+  signIn: (data: SignInData) => Promise<void>
+  signOut: () => void
+}
+
 export interface LoginResponse extends User {
   accessToken: string
   refreshToken: string
