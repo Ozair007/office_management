@@ -34,6 +34,7 @@ import DeleteUserDialog from '@/components/dashboard/DeleteUserDialog'
 import { USERS_PER_PAGE } from '@/constants'
 import type { User } from '@/types'
 import type { CreateUserFormValues, EditUserFormValues } from '@/lib/validations/user'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 function Dashboard() {
   const { user: currentUser, signOut } = useAuth()
@@ -212,13 +213,20 @@ function Dashboard() {
                             >
                               <Pencil className="h-4 w-4" />
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => openDeleteDialog(user)}
-                            >
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => user.id === currentUser?.id ? null : openDeleteDialog(user)}
+                                >
+                                  <Trash2 className={`h-4 w-4 ${user.id === currentUser?.id ? 'text-muted-foreground' : 'text-destructive'}`} />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Cannot delete yourself</p>
+                              </TooltipContent>
+                            </Tooltip>
                           </div>
                         </TableCell>
                       </TableRow>

@@ -1,0 +1,10 @@
+node_modules
+dist
+.git
+.gitignore
+*.md
+.env*
+cypress
+cypress.config.ts
+.prettierrc
+eslint.config.js
