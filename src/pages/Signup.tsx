@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Card,
   CardContent,
@@ -12,38 +13,47 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { signUpSchema, type SignUpFormValues } from '@/lib/validations/auth'
 import axios from 'axios'
 
 function Signup() {
   const navigate = useNavigate()
   const { signUp } = useAuth()
-
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const form = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  })
+
+  const onSubmit = async (data: SignUpFormValues) => {
     setError('')
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match')
-      return
-    }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters')
-      return
-    }
-
     setIsLoading(true)
+
     try {
-      await signUp(username, email, password, firstName, lastName)
+      await signUp({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      })
       navigate('/')
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -63,91 +73,111 @@ function Signup() {
           <CardTitle className="text-2xl">Create an account</CardTitle>
           <CardDescription>Enter your details to get started</CardDescription>
         </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            {error && (
-              <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-                {error}
-              </div>
-            )}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First name</Label>
-                <Input
-                  id="firstName"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardContent className="space-y-4">
+              {error && (
+                <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+                  {error}
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last name</Label>
-                <Input
-                  id="lastName"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="johndoe"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="johndoe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="you@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col gap-4 mt-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Creating account...' : 'Sign up'}
-            </Button>
-            <p className="text-center text-sm text-muted-foreground">
-              Already have an account?{' '}
-              <Link
-                to="/signin"
-                className="text-primary underline-offset-4 hover:underline"
-              >
-                Sign in
-              </Link>
-            </p>
-          </CardFooter>
-        </form>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-4 mt-4">
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? 'Creating account...' : 'Sign up'}
+              </Button>
+              <p className="text-center text-sm text-muted-foreground">
+                Already have an account?{' '}
+                <Link
+                  to="/signin"
+                  className="text-primary underline-offset-4 hover:underline"
+                >
+                  Sign in
+                </Link>
+              </p>
+            </CardFooter>
+          </form>
+        </Form>
       </Card>
     </div>
   )

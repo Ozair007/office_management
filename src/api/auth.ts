@@ -1,35 +1,10 @@
 import apiClient from './apiClient'
+import type { User, LoginResponse, SignUpData, SignInData } from '@/types'
 
-export interface User {
-  id: number
-  username: string
-  email: string
-  firstName: string
-  lastName: string
-  image?: string
-}
+export type { User }
 
-export interface LoginResponse extends User {
-  accessToken: string
-  refreshToken: string
-}
-
-export interface SignUpData {
-  firstName: string
-  lastName: string
-  email: string
-  username: string
-  password: string
-}
-
-export async function login(
-  username: string,
-  password: string
-): Promise<LoginResponse> {
-  const response = await apiClient.post<LoginResponse>('/auth/login', {
-    username,
-    password,
-  })
+export async function login(data: SignInData): Promise<LoginResponse> {
+  const response = await apiClient.post<LoginResponse>('/auth/login', data)
   return response.data
 }
 
