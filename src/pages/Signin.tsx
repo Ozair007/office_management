@@ -1,39 +1,46 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import axios from "axios";
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '@/context/AuthContext'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card'
+import axios from 'axios'
 
 function Signin() {
-	const navigate = useNavigate();
-	const { signIn } = useAuth();
+	const navigate = useNavigate()
+	const { signIn } = useAuth()
 
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [error, setError] = useState("");
-	const [isLoading, setIsLoading] = useState(false);
+	const [username, setUsername] = useState('')
+	const [password, setPassword] = useState('')
+	const [error, setError] = useState('')
+	const [isLoading, setIsLoading] = useState(false)
 
 	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		setError("");
-		setIsLoading(true);
+		e.preventDefault()
+		setError('')
+		setIsLoading(true)
 
 		try {
-			await signIn(username, password);
-			navigate("/");
+			await signIn(username, password)
+			navigate('/')
 		} catch (err) {
 			if (axios.isAxiosError(err)) {
-				setError(err.response?.data?.message || "Invalid credentials");
+				setError(err.response?.data?.message || 'Invalid credentials')
 			} else {
-				setError(err instanceof Error ? err.message : "Something went wrong");
+				setError(err instanceof Error ? err.message : 'Something went wrong')
 			}
 		} finally {
-			setIsLoading(false);
+			setIsLoading(false)
 		}
-	};
+	}
 
 	return (
 		<div className="flex min-h-screen items-center justify-center p-4">
@@ -73,11 +80,14 @@ function Signin() {
 					</CardContent>
 					<CardFooter className="flex flex-col gap-4 mt-4">
 						<Button type="submit" className="w-full" disabled={isLoading}>
-							{isLoading ? "Signing in..." : "Sign in"}
+							{isLoading ? 'Signing in...' : 'Sign in'}
 						</Button>
 						<p className="text-center text-sm text-muted-foreground">
-							Don't have an account?{" "}
-							<Link to="/signup" className="text-primary underline-offset-4 hover:underline">
+							Don't have an account?{' '}
+							<Link
+								to="/signup"
+								className="text-primary underline-offset-4 hover:underline"
+							>
 								Sign up
 							</Link>
 						</p>
@@ -85,7 +95,7 @@ function Signin() {
 				</form>
 			</Card>
 		</div>
-	);
+	)
 }
 
-export default Signin;
+export default Signin
