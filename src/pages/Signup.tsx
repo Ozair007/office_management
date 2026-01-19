@@ -22,7 +22,8 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { signUpSchema, type SignUpFormValues } from '@/lib/validations/auth'
-import axios from 'axios'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { isAxiosError } from 'axios'
 
 function Signup() {
   const navigate = useNavigate()
@@ -56,7 +57,7 @@ function Signup() {
       })
       navigate('/')
     } catch (err) {
-      if (axios.isAxiosError(err)) {
+      if (isAxiosError(err)) {
         setError(err.response?.data?.message || 'Registration failed')
       } else {
         setError(err instanceof Error ? err.message : 'Something went wrong')
@@ -68,6 +69,9 @@ function Signup() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Create an account</CardTitle>
