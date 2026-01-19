@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useAuth } from '@/context/AuthContext'
+import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -52,11 +52,7 @@ function Dashboard() {
 
   const totalPages = Math.ceil(total / USERS_PER_PAGE)
 
-  useEffect(() => {
-    fetchUsers()
-  }, [currentPage])
-
-  async function fetchUsers(deletedIds: Set<number> = deletedUserIds) {
+  const fetchUsers = useCallback(async (deletedIds: Set<number> = deletedUserIds) => {
     setIsLoading(true)
     try {
       const skip = (currentPage - 1) * USERS_PER_PAGE
@@ -69,7 +65,11 @@ function Dashboard() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [currentPage, deletedUserIds])
+
+  useEffect(() => {
+    fetchUsers()
+  }, [fetchUsers])
 
   function openEditDialog(user: User) {
     setSelectedUser(user)
