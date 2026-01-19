@@ -27,6 +27,7 @@ import {
   Trash2,
   Plus,
 } from 'lucide-react'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import AddUserDialog from '@/components/dashboard/AddUserDialog'
 import EditUserDialog from '@/components/dashboard/EditUserDialog'
 import DeleteUserDialog from '@/components/dashboard/DeleteUserDialog'
@@ -147,6 +148,7 @@ function Dashboard() {
             <span className="text-sm text-muted-foreground">
               Hello, {currentUser?.firstName}
             </span>
+            <ThemeToggle />
             <Button variant="outline" size="sm" onClick={signOut}>
               Sign out
             </Button>
